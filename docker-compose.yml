@@ -12,7 +12,7 @@ services:
       - api-network
     volumes:
       - ./my-app/src:/app/final-front/src
-      - ./my-app/public:/app/todolist/public
+      - ./my-app/public:/app/final-front/public
     depends_on:
       - final-api
     restart: always
