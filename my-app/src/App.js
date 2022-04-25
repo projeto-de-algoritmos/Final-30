@@ -4,7 +4,7 @@ import { iconsMock } from './items/mock'
 import Item from './components/Item'
 import ItemArea from './components/ItemArea';
 import './App.css';
-import { postTransaction } from './services/axios';
+import { postTransaction, getSalesStatus } from './services/axios';
 
 function App() {
 
@@ -14,10 +14,16 @@ function App() {
     const [bagWeight, setBagWeight] = useState(20)
     const [solution, setSolution] = useState(null)
     const [showSolution, setShowSolution] = useState(false)
+    const [salesStatus, setSalesStatus] = useState({vendas: 0, viagens: 0, saldo: 0})
 
+    const handleGetStatus = async() => {
+      const res = await getSalesStatus();
+      setSalesStatus(res);
+    }
 
     useEffect(() => {
         randomizeItems()
+        handleGetStatus()
     }, [])
 
     useEffect(() => {
@@ -49,6 +55,7 @@ function App() {
     const finishAttempt = async () => {
         setShowSolution(true);
         await postTransaction({ type: 'SALE', value: selectedValuation[0] });
+        await handleGetStatus();
     }
 
     const resetAttempt = () => {
@@ -81,6 +88,9 @@ function App() {
             <div className="mainArea">
                 <div className='leftArea'>
                     <div className='merchant'>
+                      <p>Total de vendas: {salesStatus.vendas}</p>
+                      <p>Total de viagens: {salesStatus.viagens}</p>
+                      <p>Saldo atual: {salesStatus.saldo}</p>
                     </div>
                 </div>
                 <div className='rightArea'>
