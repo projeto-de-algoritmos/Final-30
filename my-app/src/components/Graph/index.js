@@ -60,7 +60,7 @@ function Graph() {
         }));
 
         const graphEdges = nodes
-            .flatMap((element, index) => {
+            .map((element, index) => {
                 const arrAux = [];
                 for (let i = 0; i < edges[index].length; i++) {
                     if (edges[index][i] !== -1) {
@@ -72,8 +72,7 @@ function Graph() {
                     }
                 }
                 return arrAux;
-            })
-            console.log(graphEdges)
+            }).flat();
         const graphData = {
             nodes: graphNodes,
             edges: graphEdges
