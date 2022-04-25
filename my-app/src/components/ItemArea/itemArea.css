@@ -1,0 +1,13 @@
+.itemAreaClass {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 386px;
+    max-height: 381px;
+    min-height: 80px;
+    overflow: auto; 
+    background: #916972;
+    padding: 5px;
+    border: solid 2px #5A4147;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
