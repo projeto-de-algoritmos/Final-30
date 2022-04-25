@@ -10,7 +10,7 @@ function knapSackRecursive(capacidadeTotal, items, itemsSize, bagItems = []) {
     return (items[itemsSize - 1].value + use[0]) > notUse[0] ? [items[itemsSize - 1].value + use[0], [...use[1], items[itemsSize - 1].key]] : notUse;
 }
 
-const cidades = [
+export const cidades = [
     'Nusco',
     'Dirath',
     'Galusma',
@@ -146,9 +146,9 @@ export const knapSackLimitedPathSimple = (pathLimit, bagLimit, current, visited 
     return maxValue;
   }
 
-export const startDjikstra = () => {
-    let [totalBag, goals] = knapSackRecursive(20, nodes, nodes.length);
-    let startNode = nodes[0].key;
+export const startDjikstra = ({ initialNode, bagWeight }) => {
+    let [totalBag, goals] = knapSackRecursive(bagWeight, nodes, nodes.length);
+    let startNode = initialNode;
     let finalPath = [0];
     let finalLength = 0;
     let L1 = [];

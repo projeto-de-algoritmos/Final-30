@@ -1,3 +1,54 @@
+export const itensBag = [
+    {
+        name: 'Poção de vida',
+        value: 1,
+        weight: 5,
+        icon: '/icons/potion_1.png'
+    },
+    {
+        name: 'Espada de ferro',
+        value: 55,
+        weight: 12,
+        icon: '/icons/sword_2.png'
+    },
+    {
+        name: 'Capacete de rubi',
+        value: 47,
+        weight: 18,
+        icon: '/icons/helmet_3.png'
+    },
+    {
+        name: 'Cajado de caravlho',
+        value: 89,
+        weight: 20,
+        icon: '/icons/staff_3.png'
+    },
+    {
+        name: 'Colar de rubi',
+        value: 63,
+        weight: 1,
+        icon: '/icons/necklace_3.png'
+    },
+    {
+        name: 'Chapéu prata',
+        value: 44,
+        weight: 7,
+        icon: '/icons/hat_1.png'
+    },
+    {
+        name: 'Armadura de ouro',
+        value: 23,
+        weight: 19,
+        icon: '/icons/armor_3.png'
+    },
+    {
+        name: 'Colar de ouro',
+        value: 51,
+        weight: 16,
+        icon: '/icons/necklace_2.png'
+    }
+]
+
 export const iconsMock = [
     {
         name: 'Espada de madeira',

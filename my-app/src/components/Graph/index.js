@@ -70,6 +70,9 @@ function Graph() {
                 container: ReactDOM.findDOMNode(graphRef.current),
                 width: 400,
                 height: 400,
+                modes: {
+                    default: ['drag-node', 'click-select'],
+                  },
 
                 defaultNode: {
                     type: 'node',
@@ -79,6 +82,7 @@ function Graph() {
                             fontSize: 20,
                         },
                     },
+                    
                     style: {
                         stroke: '#72CC4A',
                         width: 150,
@@ -91,6 +95,7 @@ function Graph() {
                 },
                 layout: {
                     type: "random",
+                    center: [200,200],
                     width: 400,
                     height: 400
                 }

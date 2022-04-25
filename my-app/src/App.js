@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import { knapSackRecursive } from './algorithms/knapsack'
-import { iconsMock } from './items/mock'
+import { iconsMock, itensBag } from './items/mock'
 import Item from './components/Item'
 import ItemArea from './components/ItemArea';
 import './App.css';
 import { postTransaction, getSalesStatus } from './services/axios';
-import { startDjikstra, knapSackLimitedPathSimple } from './algorithms/utils';
+import { startDjikstra, knapSackLimitedPathSimple, cidades } from './algorithms/utils';
 import Graph from './components/Graph';
 
 function App() {
@@ -15,8 +15,12 @@ function App() {
   const [selectedValuation, setSelectedValuation] = useState([0, 0])
   const [bagWeight, setBagWeight] = useState(20)
   const [solution, setSolution] = useState(null)
+  const [solutionValue, setSolutionValue] = useState(0)
   const [showSolution, setShowSolution] = useState(false)
   const [salesStatus, setSalesStatus] = useState({ vendas: 0, viagens: 0, saldo: 0 })
+  const [solutionPath, setSolutionPath] = useState([''])
+  const [initialNode, setInitialNode] = useState(0)
+  const [gameMode, setGameMode] = useState('KNAPSACK_WITH_LIMIT')
 
   const handleGetStatus = async () => {
     const res = await getSalesStatus();
@@ -26,8 +30,6 @@ function App() {
   useEffect(() => {
     randomizeItems()
     handleGetStatus()
-    startDjikstra()
-    console.log('knapSackLimitedPathSimple', knapSackLimitedPathSimple(100, 50, 0))
   }, [])
 
   useEffect(() => {
@@ -39,27 +41,39 @@ function App() {
     let actualResult = selectedItems.reduce((acc, curr) => {
       return [acc[0] + curr.value, acc[1] + curr.weight]
     }, [0, 0])
-
     setSelectedValuation(actualResult)
   }, [selectedItems])
 
   const handleSelectItem = (item) => {
     const arrayFiltered = items.filter(el => el.name !== item.name)
     setSelectedItems((prevState) => [...prevState, item])
+    if (gameMode !== 'KNAPSACK_WITH_LIMIT') return
     setItems(arrayFiltered)
   }
+
+  const handleSelectGameMode = (value) => {
+    setGameMode(value)
+  }
+
+  useEffect(() => {
+    setItems(itensBag)
+    resetAttempt()
+  }, [gameMode])
 
   const handleRemoveItem = (item) => {
     if (showSolution) return
     const arrayFiltered = selectedItems.filter(el => el.name !== item.name)
-    setItems((prevState) => [...prevState, item])
     setSelectedItems(arrayFiltered)
+    if (gameMode !== 'KNAPSACK_WITH_LIMIT') return
+    setItems((prevState) => [...prevState, item])
   }
 
   const finishAttempt = async () => {
     setShowSolution(true);
-    await postTransaction({ type: 'SALE', value: selectedValuation[0] });
-    await handleGetStatus();
+    // if(selectedValuation[1] < bagWeight) {
+    //   await postTransaction({ type: 'SALE', value: selectedValuation[0] });
+    //   await handleGetStatus();
+    // }
   }
 
   const resetAttempt = () => {
@@ -69,21 +83,35 @@ function App() {
     randomizeItems()
   }
 
+  const typeKnapsackWithLimit = ({ maxPath, maxWeight }) => {
+    const knapsackWithLimit = knapSackLimitedPathSimple(maxPath, maxWeight, initialNode || 0)
+    const knapsackWithLimitItemSolution = knapsackWithLimit[3].map((el) => itensBag[el])
+    const knapsackWithLimitValue = knapsackWithLimit[0]
+    const knapsackWithLimitEndPosition = knapsackWithLimit[4].slice(-1)
+    const path = knapsackWithLimit[4].map(el => cidades[el])
+    return [knapsackWithLimitItemSolution, knapsackWithLimitValue, knapsackWithLimitEndPosition[0], path]
+  }
+
+  const typeStartDjikstra = ({ bagWeight }) => {
+    const startDjikstraRes = startDjikstra({ initialNode, bagWeight })
+    const startDjikstraItem = startDjikstraRes.finalPath.map((el) => itensBag[el])
+    const startDjikstraValue = startDjikstraRes.totalBag
+    const startDjikstraEndPosition = startDjikstraRes.finalPath.slice(-1)
+    const path = startDjikstraRes.finalPath.map(el => cidades[el])
+    return [startDjikstraItem, startDjikstraValue, startDjikstraEndPosition[0], path]
+  }
+
 
   const randomizeItems = () => {
-    const size = Math.floor(Math.random() * 20) + 5
-    const weight = Math.floor(Math.random() * 120) + 20
-    setBagWeight(weight)
-    const numbers = new Set([])
-    const selected = []
-
-    while (numbers.size < size) {
-      numbers.add(Math.floor(Math.random() * 36))
-    }
-    numbers.forEach((el) => selected.push(iconsMock[el]))
-    const solutionList = knapSackRecursive(weight, selected, selected.length)
-    setSolution(solutionList)
-    setItems(selected)
+    const maxPath = Math.floor(Math.random() * 175) + 9
+    const maxWeight = Math.floor(Math.random() * 98) + 1
+    setBagWeight(maxWeight)
+    setItems(itensBag)
+    const solution = gameMode === 'KNAPSACK_WITH_LIMIT' ? typeKnapsackWithLimit({ maxPath, maxWeight }) : typeStartDjikstra({ bagWeight: maxWeight })
+    setSolution(solution[0])
+    setSolutionValue(solution[1])
+    setInitialNode(solution[2])
+    setSolutionPath(solution[3])
   }
 
   return (
@@ -97,7 +125,7 @@ function App() {
             <p>Saldo atual: {salesStatus.saldo}</p>
           </div>
           <div className='merchant'>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '400px', height: '400px', paddingTop: '15px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '400px', height: '400px', padding: '15px' }}>
               <p>Grafo representativo</p>
               <Graph />
             </div>
@@ -108,6 +136,10 @@ function App() {
 
             <ItemArea>
               <div style={{ textAlign: 'center', width: '100%' }}>
+                <select name="select" value={gameMode} onChange={(e) => handleSelectGameMode(e.target.value)}>
+                  <option value='KNAPSACK_WITH_LIMIT'>With limit</option>
+                  <option value='START_DJIKSTRA'>Start djk</option>
+                </select>
                 <p>Essas são as mercadorias de hoje.</p>
                 <p>Você consegue carregar {bagWeight}kg.</p>
               </div>
@@ -125,7 +157,7 @@ function App() {
           }
           <ItemArea>
             <div style={{ textAlign: 'center', width: '100%' }}>
-              <p>Essas são as mercadorias selecionadas</p>
+              <p>Essas são as mercadorias que podem ser recuperadas</p>
             </div>
             {
               selectedItems.length > 0 ?
@@ -143,27 +175,30 @@ function App() {
             </div>
           </ItemArea>
 
+
+          {(solution && showSolution) &&
+            <ItemArea>
+              <div style={{ textAlign: 'center', width: '100%' }}>
+                <p>Solução: </p>
+              </div>
+              {solution.map(el => <Item item={el} key={el.name} selectItem={() => { }} />)}
+              <div style={{ textAlign: 'center', width: '100%' }}>
+                <p>Valor total: {solutionValue}</p>
+              </div>
+              <div style={{ textAlign: 'center', width: '100%' }}>
+                <p>Caminho: {solutionPath.map((el) => <span>- {el} -</span>)}</p>
+              </div>
+            </ItemArea>
+          }
           <div style={{ display: 'flex' }}>
             {!showSolution &&
               <button className='buttonClass' type='button' onClick={finishAttempt}>Finalizar</button>
             }
             <button className='buttonClass' type='button' onClick={resetAttempt}>Reiniciar</button>
           </div>
-
         </div>
 
 
-        {(solution && showSolution) &&
-          <ItemArea>
-            <div style={{ textAlign: 'center', width: '100%' }}>
-              <p>Solução: </p>
-            </div>
-            {solution[1].map(el => <Item item={el} key={el.name} selectItem={() => { }} />)}
-            <div style={{ textAlign: 'center', width: '100%' }}>
-              <p>Valor total: {solution[0]}</p>
-            </div>
-          </ItemArea>
-        }
 
       </div>
     </div>
