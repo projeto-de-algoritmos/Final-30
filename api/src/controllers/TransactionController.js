@@ -2,12 +2,10 @@ const Transaction = require('../models/Transactions');
 
 const postTransaction = async (req, res) => {
     const { 
-        transactionType,
         transactionValue
     } = req.body;
 
     const transaction = new Transaction({
-        transactionType,
         transactionValue
     });
 

@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const TransactionRoutes = require('../routes/TransactionRoutes');
+const TravelRoutes = require('../routes/TravelRoutes');
 
 const app = express();
 
@@ -14,6 +15,6 @@ app.use('/api/hello', function(req, res) {
 });
 
 app.use('/api', TransactionRoutes);
-
+app.use('/api', TravelRoutes);
 
 module.exports = app;
