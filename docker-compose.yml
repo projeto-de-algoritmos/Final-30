@@ -1,0 +1,55 @@
+version: "3"
+services:
+
+  final-frontend:
+    container_name: final-frontend
+    build: 
+      context: ./my-app
+      dockerfile: Dockerfile
+    ports:
+      - 3001:3000
+    networks:
+      - api-network
+    volumes:
+      - ./my-app/src:/app/final-front/src
+      - ./my-app/public:/app/todolist/public
+    depends_on:
+      - final-api
+    restart: always
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    stdin_open: true
+    tty: true
+  
+  final-api:
+    container_name: final-api
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    networks:
+      - api-network
+      - db-network
+    volumes:
+      - ./api:/app/final-api
+    depends_on:
+      - final-db
+
+  final-db:
+    container_name: mongo-db
+    image: mongo
+    expose:
+      - 27017
+    networks:
+      - db-network
+    volumes:
+      - mongo-data:/data/db
+
+networks:
+  api-network:
+    driver: bridge
+  db-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
+    driver: local

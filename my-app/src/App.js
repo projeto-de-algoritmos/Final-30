@@ -4,6 +4,7 @@ import { iconsMock } from './items/mock'
 import Item from './components/Item'
 import ItemArea from './components/ItemArea';
 import './App.css';
+import { postTransaction } from './services/axios';
 
 function App() {
 
@@ -45,8 +46,9 @@ function App() {
         setSelectedItems(arrayFiltered)
     }
 
-    const finishAttempt = () => {
-        setShowSolution(true)
+    const finishAttempt = async () => {
+        setShowSolution(true);
+        await postTransaction({ type: 'SALE', value: selectedValuation[0] });
     }
 
     const resetAttempt = () => {
