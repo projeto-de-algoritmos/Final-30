@@ -35,7 +35,6 @@
 
 .mainArea {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: space-around;
   background: rgba(41, 35, 56, 0.45);
@@ -46,6 +45,7 @@
 
 .leftArea {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: space-around;
   min-height: 90%;
@@ -54,8 +54,8 @@
 
 .rightArea {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-around;
   height: 90%;
   width: 50%;
 }

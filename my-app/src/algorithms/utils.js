@@ -1,8 +1,4 @@
-// import React, { useRef, useEffect } from 'react';
-// import ReactDOM from 'react-dom'
-// import G6 from "@antv/g6";
-
-var PriorityQueue = require('js-priority-queue');
+const PriorityQueue = require('js-priority-queue');
 
 function knapSackRecursive(capacidadeTotal, items, itemsSize, bagItems = []) {
     if (itemsSize === 0 || capacidadeTotal === 0) return [0, bagItems];

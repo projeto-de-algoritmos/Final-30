@@ -6,6 +6,7 @@ import ItemArea from './components/ItemArea';
 import './App.css';
 import { postTransaction, getSalesStatus } from './services/axios';
 import { startDjikstra, knapSackLimitedPathSimple } from './algorithms/utils';
+import Graph from './components/Graph';
 
 function App() {
 
@@ -26,7 +27,7 @@ function App() {
     randomizeItems()
     handleGetStatus()
     startDjikstra()
-    console.log(knapSackLimitedPathSimple(100, 50, 0))
+    console.log('knapSackLimitedPathSimple', knapSackLimitedPathSimple(100, 50, 0))
   }, [])
 
   useEffect(() => {
@@ -95,70 +96,74 @@ function App() {
             <p>Total de viagens: {salesStatus.viagens}</p>
             <p>Saldo atual: {salesStatus.saldo}</p>
           </div>
+          <div className='merchant'>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '400px', height: '400px', paddingTop: '15px' }}>
+              <p>Grafo representativo</p>
+              <Graph />
+            </div>
+          </div>
         </div>
         <div className='rightArea'>
-          <div className='columnDiv'>
-            {
+          {
 
-              <ItemArea>
-                <div style={{ textAlign: 'center', width: '100%' }}>
-                  <p>Essas são as mercadorias de hoje.</p>
-                  <p>Você consegue carregar {bagWeight}kg.</p>
-                </div>
-                {
-                  items.length > 0 ?
-                    items.map((el) => (
-                      <Item item={el} key={Math.random()} selectItem={handleSelectItem} />
-                    ))
-                    :
-                    <div style={{ textAlign: 'center', width: '100%' }}>
-                      <p>Sem mercadorias...</p>
-                    </div>
-                }
-              </ItemArea>
-            }
             <ItemArea>
               <div style={{ textAlign: 'center', width: '100%' }}>
-                <p>Essas são as mercadorias selecionadas</p>
+                <p>Essas são as mercadorias de hoje.</p>
+                <p>Você consegue carregar {bagWeight}kg.</p>
               </div>
               {
-                selectedItems.length > 0 ?
-                  selectedItems.map((el) => (
-                    <Item item={el} key={Math.random()} selectItem={handleRemoveItem} />
+                items.length > 0 ?
+                  items.map((el) => (
+                    <Item item={el} key={Math.random()} selectItem={handleSelectItem} />
                   ))
                   :
                   <div style={{ textAlign: 'center', width: '100%' }}>
                     <p>Sem mercadorias...</p>
                   </div>
-
               }
-              <div style={{ textAlign: 'center', width: '100%' }}>
-                <p>Valor total: {selectedValuation[0]} - Peso: <span style={{ color: selectedValuation[1] > bagWeight ? '#d0342c' : 'black' }}>{selectedValuation[1]}kg</span></p>
-              </div>
-            </ItemArea>
-
-            <div style={{ display: 'flex' }}>
-              {!showSolution &&
-                <button className='buttonClass' type='button' onClick={finishAttempt}>Finalizar</button>
-              }
-              <button className='buttonClass' type='button' onClick={resetAttempt}>Reiniciar</button>
-            </div>
-
-          </div>
-
-
-          {(solution && showSolution) &&
-            <ItemArea>
-              <div style={{ textAlign: 'center', width: '100%' }}>
-                <p>Solução: </p>
-              </div>
-              {solution[1].map(el => <Item item={el} key={el.name} selectItem={() => { }} />)}
-              <div style={{ textAlign: 'center', width: '100%' }}>
-                <p>Valor total: {solution[0]}</p>
-              </div>
             </ItemArea>
           }
+          <ItemArea>
+            <div style={{ textAlign: 'center', width: '100%' }}>
+              <p>Essas são as mercadorias selecionadas</p>
+            </div>
+            {
+              selectedItems.length > 0 ?
+                selectedItems.map((el) => (
+                  <Item item={el} key={Math.random()} selectItem={handleRemoveItem} />
+                ))
+                :
+                <div style={{ textAlign: 'center', width: '100%' }}>
+                  <p>Sem mercadorias...</p>
+                </div>
+
+            }
+            <div style={{ textAlign: 'center', width: '100%' }}>
+              <p>Valor total: {selectedValuation[0]} - Peso: <span style={{ color: selectedValuation[1] > bagWeight ? '#d0342c' : 'black' }}>{selectedValuation[1]}kg</span></p>
+            </div>
+          </ItemArea>
+
+          <div style={{ display: 'flex' }}>
+            {!showSolution &&
+              <button className='buttonClass' type='button' onClick={finishAttempt}>Finalizar</button>
+            }
+            <button className='buttonClass' type='button' onClick={resetAttempt}>Reiniciar</button>
+          </div>
+
         </div>
+
+
+        {(solution && showSolution) &&
+          <ItemArea>
+            <div style={{ textAlign: 'center', width: '100%' }}>
+              <p>Solução: </p>
+            </div>
+            {solution[1].map(el => <Item item={el} key={el.name} selectItem={() => { }} />)}
+            <div style={{ textAlign: 'center', width: '100%' }}>
+              <p>Valor total: {solution[0]}</p>
+            </div>
+          </ItemArea>
+        }
 
       </div>
     </div>
