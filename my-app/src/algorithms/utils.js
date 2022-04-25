@@ -1,6 +1,6 @@
-import React, { useRef, useEffect } from 'react';
-import ReactDOM from 'react-dom'
-import G6 from "@antv/g6";
+// import React, { useRef, useEffect } from 'react';
+// import ReactDOM from 'react-dom'
+// import G6 from "@antv/g6";
 
 var PriorityQueue = require('js-priority-queue');
 
@@ -81,11 +81,6 @@ const nodes = [
     { key: 7, weight: 16, value: 51 }
 ];
 
-const graphRef = useRef(null);
-const graph = useRef(null);
-
-
-
 const shortPath = (startPath, endPath) => {
     const queueList = new PriorityQueue({ comparator: (a, b) => { return a[0] - b[0] } });
     const definitiveMap = new Map();
@@ -131,7 +126,31 @@ const shortPath = (startPath, endPath) => {
     return [[...path, startPath].reverse(), definitiveMap.get(endPath)?.[0]];
 }
 
-const startDjikstra = () => {
+export const knapSackLimitedPathSimple = (pathLimit, bagLimit, current, visited = {}, totalCurrentPath = 0, totalCurrentBag = 0, bagValue = 0, bagItems = [], currentPath = []) => {
+    visited[current] = true;
+    let maxValue = [bagValue, totalCurrentPath, totalCurrentBag, bagItems, currentPath];
+    if(nodes.length === Object.keys(visited).length) return maxValue;
+    edges[current].forEach((edge,index) => {
+      if(edge === -1) return;
+      if(visited[index]) return;
+      if(totalCurrentPath + edge <= pathLimit) {
+        let currentValue;
+        const notUse = knapSackLimitedPathSimple(pathLimit, bagLimit, index, JSON.parse(JSON.stringify(visited)), totalCurrentPath + edge, totalCurrentBag, bagValue, bagItems, [...currentPath, index]);
+        if(totalCurrentBag + nodes[index].weight <= bagLimit) {
+          const use = knapSackLimitedPathSimple(pathLimit, bagLimit, index, JSON.parse(JSON.stringify(visited)), totalCurrentPath + edge, totalCurrentBag + nodes[index].weight, bagValue + nodes[index].value, [...bagItems, nodes[index].key], [...currentPath, index]);
+          currentValue = use[0] > notUse[0] ? use : notUse;
+        } else {
+          currentValue = notUse;
+        }
+        if(currentValue[0] > maxValue[0]){
+          maxValue = currentValue;
+        }
+      }
+    });
+    return maxValue;
+  }
+
+export const startDjikstra = () => {
     let [totalBag, goals] = knapSackRecursive(20, nodes, nodes.length);
     let startNode = nodes[0].key;
     let finalPath = [0];
@@ -161,63 +180,3 @@ const startDjikstra = () => {
     console.log({ finalLength, finalPath: finalPath.flat(), totalBag })
     return { finalLength, finalPath: finalPath.flat(), totalBag };
 };
-
-
-
-useEffect(() => {
-
-    const graphNodes = nodes.map((node, index) => ({
-        ...node,
-        x: posicao[index].X,
-        y: posicao[index].Y,
-        label: cidades[index],
-        id: node.key.toString()
-    }));
-
-    const graphEdges = nodes
-        .map((element, index) => {
-            const arrAux = [];
-            for (let i = 0; i < edges[index].length; i++) {
-                if (edges[index][i] !== -1) {
-                    arrAux.push({
-                        source: element.key.toString(),
-                        target: nodes[i].key.toString()
-                    });
-                }
-            }
-            return arrAux;
-        })
-        .flat();
-
-    const graphData = {
-        nodes: graphNodes,
-        edges: graphEdges
-    };
-    if (!graph.current) {
-        graph.current = new G6.Graph({
-            container: ReactDOM.findDOMNode(graphRef.current),
-            width: 500,
-            height: 500,
-            defaultNode: {
-                type: 'node',
-                labelCfg: {
-                    style: {
-                        fill: '#000000A6',
-                        fontSize: 10,
-                    },
-                },
-                style: {
-                    stroke: '#72CC4A',
-                    width: 150,
-                },
-            },
-            defaultEdge: {
-                style: {
-                    stroke: "#e2e2e2"
-                }
-            },
-        });
-    }
-    graph.current.data(graphData);
-    graph.current.render();
-}, []);

@@ -5,6 +5,7 @@ import Item from './components/Item'
 import ItemArea from './components/ItemArea';
 import './App.css';
 import { postTransaction, getSalesStatus } from './services/axios';
+import { startDjikstra, knapSackLimitedPathSimple } from './algorithms/utils';
 
 function App() {
 
@@ -24,6 +25,8 @@ function App() {
   useEffect(() => {
     randomizeItems()
     handleGetStatus()
+    startDjikstra()
+    console.log(knapSackLimitedPathSimple(100, 50, 0))
   }, [])
 
   useEffect(() => {
