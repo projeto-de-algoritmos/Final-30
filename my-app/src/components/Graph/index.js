@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, memo } from 'react';
+import React, { useRef, useEffect } from 'react';
 import ReactDOM from 'react-dom'
 import G6 from "@antv/g6";
 
@@ -11,6 +11,18 @@ const cidades = [
     'Shaomor',
     'Tulrid',
     'Megi'
+]
+
+
+const cordinates = [
+    { x: 85, y: 40 },
+    { x: 110, y: 130 },
+    { x: 40, y: 170 },
+    { x: 95, y: 310 },
+    { x: 120, y: 240 },
+    { x: 250, y: 180 },
+    { x: 250, y: 40 },
+    { x: 360, y: 250 }
 ]
 
 const edges = [
@@ -41,26 +53,27 @@ function Graph() {
     useEffect(() => {
 
         const graphNodes = nodes.map((node, index) => ({
-            ...node,
+            x: cordinates[index].x,
+            y: cordinates[index].y,
             label: cidades[index],
             id: node.key.toString()
         }));
 
         const graphEdges = nodes
-            .map((element, index) => {
+            .flatMap((element, index) => {
                 const arrAux = [];
                 for (let i = 0; i < edges[index].length; i++) {
                     if (edges[index][i] !== -1) {
                         arrAux.push({
                             source: element.key.toString(),
-                            target: nodes[i].key.toString()
+                            target: nodes[i].key.toString(),
+                            label: index < i ? edges[i][index].toString() : ''
                         });
                     }
                 }
                 return arrAux;
             })
-            .flat();
-
+            console.log(graphEdges)
         const graphData = {
             nodes: graphNodes,
             edges: graphEdges
@@ -72,7 +85,7 @@ function Graph() {
                 height: 400,
                 modes: {
                     default: ['drag-node', 'click-select'],
-                  },
+                },
 
                 defaultNode: {
                     type: 'node',
@@ -82,7 +95,7 @@ function Graph() {
                             fontSize: 20,
                         },
                     },
-                    
+
                     style: {
                         stroke: '#72CC4A',
                         width: 150,
@@ -90,14 +103,12 @@ function Graph() {
                 },
                 defaultEdge: {
                     style: {
-                        stroke: "#e2e2e2"
+                        stroke: "white",
+                    },
+                    labelCfg: {
+                        refY: 10,
+                        position: 'center',
                     }
-                },
-                layout: {
-                    type: "random",
-                    center: [200,200],
-                    width: 400,
-                    height: 400
                 }
             });
         }
