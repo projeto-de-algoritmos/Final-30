@@ -23,12 +23,32 @@ O objetivo do trabalho é demonstrar uma variação do algoritmo de menor caminh
 Caso o link não funcione, o vídeo está dentro da pasta 'screenshots' e tem o nome de 'ProjetoDeAlgoritmosD-C-Dupla30'
 Link do one drive: [Vídeo de apresentação](https://unbbr-my.sharepoint.com/:v:/r/personal/160127891_aluno_unb_br/Documents/Grava%C3%A7%C3%B5es/Reuni%C3%A3o%20com%20Nicalo%20Ribeiro%20Dourado%20Araujo-20220425_211631-Grava%C3%A7%C3%A3o%20de%20Reuni%C3%A3o.mp4?csf=1&web=1&e=ga3ImJ)
 ## Screenshots
+- Tela inicial  
+
 ![Tela inicial](screenshots/final1.png)
+
+- Seleção do modo de jogo
+
 ![Tela inicial](screenshots/final2.png)
+
+- Itens selecionados 
+
 ![Tela inicial](screenshots/final3.png)
+
+- Itens selcionados com a solução  
+
 ![Tela inicial](screenshots/final4.png)
+
+- Visão geral
+
 ![Tela inicial](screenshots/final5.gif)
+
+- Demonstração
+  
 ![Tela inicial](screenshots/final6.gif)
+
+- Demonstração
+
 ![Tela inicial](screenshots/final7.gif)
 
 ## Instalação 
