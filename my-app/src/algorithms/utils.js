@@ -1,15 +1,5 @@
 const PriorityQueue = require('js-priority-queue');
 
-function knapSackRecursive(capacidadeTotal, items, itemsSize, bagItems = []) {
-    if (itemsSize === 0 || capacidadeTotal === 0) return [0, bagItems];
-
-    if (items[itemsSize - 1].weight > capacidadeTotal) return knapSackRecursive(capacidadeTotal, items, itemsSize - 1, bagItems)
-
-    const use = knapSackRecursive(capacidadeTotal - items[itemsSize - 1].weight, items, itemsSize - 1, bagItems);
-    const notUse = knapSackRecursive(capacidadeTotal, items, itemsSize - 1, bagItems);
-    return (items[itemsSize - 1].value + use[0]) > notUse[0] ? [items[itemsSize - 1].value + use[0], [...use[1], items[itemsSize - 1].key]] : notUse;
-}
-
 export const cidades = [
     'Nusco',
     'Dirath',
@@ -19,41 +9,6 @@ export const cidades = [
     'Shaomor',
     'Tulrid',
     'Megi'
-]
-
-const posicao = [
-    {
-        X: 43,
-        Y: 45,
-    },
-    {
-        X: 398,
-        Y: 88,
-    },
-    {
-        X: 256,
-        Y: 175,
-    },
-    {
-        X: 121,
-        Y: 227,
-    },
-    {
-        X: 210,
-        Y: 331,
-    },
-    {
-        X: 59,
-        Y: 406,
-    },
-    {
-        X: 424,
-        Y: 399,
-    },
-    {
-        X: 415,
-        Y: 292,
-    }
 ]
 
 const edges = [
@@ -76,6 +31,17 @@ const nodes = [
     { key: 6, weight: 19, value: 23 },
     { key: 7, weight: 16, value: 51 }
 ];
+
+function knapSackRecursive(capacidadeTotal, items, itemsSize, bagItems = []) {
+    if (itemsSize === 0 || capacidadeTotal === 0) return [0, bagItems];
+
+    if (items[itemsSize - 1].weight > capacidadeTotal) return knapSackRecursive(capacidadeTotal, items, itemsSize - 1, bagItems)
+
+    const use = knapSackRecursive(capacidadeTotal - items[itemsSize - 1].weight, items, itemsSize - 1, bagItems);
+    const notUse = knapSackRecursive(capacidadeTotal, items, itemsSize - 1, bagItems);
+    return (items[itemsSize - 1].value + use[0]) > notUse[0] ? [items[itemsSize - 1].value + use[0], [...use[1], items[itemsSize - 1].key]] : notUse;
+}
+
 
 const shortPath = (startPath, endPath) => {
     const queueList = new PriorityQueue({ comparator: (a, b) => { return a[0] - b[0] } });

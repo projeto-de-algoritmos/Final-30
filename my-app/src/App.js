@@ -53,6 +53,7 @@ const getDateFormatted = (date) => {
   }, [selectedItems])
 
   const handleSelectItem = (item) => {
+    if(showSolution) return
     const arrayFiltered = items.filter(el => el.name !== item.name)
     setSelectedItems((prevState) => [...prevState, item])
     if (gameMode !== 'KNAPSACK_WITH_LIMIT') return
