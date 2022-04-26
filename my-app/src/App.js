@@ -21,6 +21,7 @@ function App() {
   const [initialNode, setInitialNode] = useState(0)
   const currentCity = useRef(0)
   const [gameMode, setGameMode] = useState('KNAPSACK_WITH_LIMIT')
+  const [pathLimit, setPathLimit] = useState(0);
 
   const getTimeFormatted = (date) => {
     return new Date(date).toLocaleTimeString('pt-BR')
@@ -119,6 +120,7 @@ const getDateFormatted = (date) => {
 
   const randomizeItems = () => {
     const maxPath = Math.floor(Math.random() * 175) + 9
+    setPathLimit(maxPath)
     const maxWeight = Math.floor(Math.random() * 98) + 1
     setBagWeight(maxWeight)
     setItems(itensBag)
@@ -184,6 +186,10 @@ const getDateFormatted = (date) => {
                   </select>
                   <p>Cidade atual: {cidades[currentCity.current]}</p>
                   <p>Você consegue carregar {bagWeight}kg.</p>
+                  {
+                    gameMode === 'KNAPSACK_WITH_LIMIT' &&
+                    <p>Maior distância: {pathLimit}</p>
+                  }
                 </div>
                 {
                   items.length > 0 ?
